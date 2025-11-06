@@ -1,7 +1,18 @@
-import Image from "next/image";
+"use client";
+
+
+
+import Hero from "@/components/Hero";
+import Features from "@/components/Features";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-  <h1 className="bg-white">nhi hone waala</h1>
+    <div >
+      
+      <Hero/>
+      <Features/>
+      <Footer/>
+    </div>
   );
 }
