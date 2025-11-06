@@ -2,6 +2,6 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-  <h1>nhi hone waala</h1>
+  <h1 className="bg-white">nhi hone waala</h1>
   );
 }

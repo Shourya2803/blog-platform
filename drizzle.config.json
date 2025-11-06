@@ -1,0 +1,6 @@
+{
+  "schema": "./src/server/db/schema.ts",
+  "out": "./migrations",
+  "dialect": "postgres",
+  "driver": "pg"
+}
