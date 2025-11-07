@@ -60,12 +60,12 @@ export default function Navbar() {
 
   return (
     <nav className={`${navBgClass} shadow-sm`}>
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-4 sm:py-3 md:py-6 lg:py-10 flex items-center justify-between">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-3 sm:py-3 md:py-6 lg:py-10 flex items-center justify-between">
         {/* Left: Logo */}
         <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="text-2xl sm:text-2xl md:text-4xl lg:text-6xl font-bold text-purple-600 hover:scale-105 transition-transform"
+            className="text-xl sm:text-2xl md:text-4xl lg:text-6xl font-bold text-purple-600 hover:scale-105 transition-transform"
           >
             Blogify
           </Link>
