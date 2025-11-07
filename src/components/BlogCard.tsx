@@ -136,5 +136,5 @@ export default function BlogCard({ post, search, selectedCategory }: { post: any
     </motion.div>
   );
 }
-;
+
 
