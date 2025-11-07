@@ -90,25 +90,25 @@ export default function BlogsPage() {
       {/* Main Content */}
       <div className="md:col-span-3 space-y-6">
         {/* Search + Category Filter */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 mb-6">
           <Input
             placeholder="Search by title..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1"
+            className="w-full sm:flex-1"
           />
           <Input
             placeholder="Search by category..."
             value={categorySearch}
             onChange={(e) => setCategorySearch(e.target.value)}
-            className="w-64"
+            className="w-full sm:w-64"
           />
           <label className="sr-only" htmlFor="category-select">Filter by category</label>
           <select
             id="category-select"
             value={selectedCategory ?? ""}
             onChange={(e) => setSelectedCategory(e.target.value || null)}
-            className="rounded-md border px-3 py-2 bg-white dark:bg-zinc-900 text-sm"
+            className="w-full sm:w-auto rounded-md border px-3 py-2 bg-white dark:bg-zinc-900 text-sm"
           >
             <option value="">All</option>
             {categories?.map((cat) => (
