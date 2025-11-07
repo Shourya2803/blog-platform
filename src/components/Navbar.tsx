@@ -28,7 +28,7 @@ export default function Navbar() {
         <div className="flex items-center gap-6 text-gray-700 dark:text-gray-300 text-sm">
           <NavLink href="/">Home</NavLink>
           <NavLink href="/blog">Blogs</NavLink>
-            <NavLink href="/posts/create">New Post</NavLink>
+            <NavLink href="/blog/create">New Post</NavLink>
           <NavLink href="/categories">Categories</NavLink>
         </div>
 

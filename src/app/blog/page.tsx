@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
 import { motion } from "framer-motion";
 import { FileText, PlusCircle } from "lucide-react";
@@ -13,9 +13,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function BlogsPage() {
-  const postsPerPage = 3;
+  const postsPerPage = 4;
 
   const [search, setSearch] = useState("");
+  const [categorySearch, setCategorySearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -23,8 +24,30 @@ export default function BlogsPage() {
   const { data: posts, isLoading, isError } = trpc.post.getAll.useQuery();
   const { data: categories } = trpc.category.getAll.useQuery();
 
-  // Recent posts derived client-side from posts (simpler than adding a new server procedure)
-  const recentPosts = posts ? posts.slice(0, 3) : undefined;
+  // Recent posts derived client-side from posts (most recently created first)
+  const recentPosts = posts
+    ? [...posts]
+        .sort((a: any, b: any) => {
+          const ad = a?.created_at ? new Date(a.created_at).getTime() : 0;
+          const bd = b?.created_at ? new Date(b.created_at).getTime() : 0;
+          return bd - ad;
+        })
+        .slice(0, 3)
+    : undefined;
+
+  // filter posts by title search, selected category, and category search
+  const allPosts = posts ?? [];
+  const filteredPosts = allPosts.filter((p: any) => {
+    const matchesSearch = !search.trim() || (p?.title && p.title.toLowerCase().includes(search.toLowerCase()));
+    const matchesSelectedCategory = !selectedCategory ? true : (p?.categories || []).some((c: any) => c.name === selectedCategory);
+    const matchesCategorySearch = !categorySearch.trim() || (p?.categories || []).some((c: any) => c.name.toLowerCase().includes(categorySearch.toLowerCase()));
+    return matchesSearch && matchesSelectedCategory && matchesCategorySearch;
+  });
+
+  // reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedCategory, categorySearch]);
 
   // polished loading state
   if (isLoading) {
@@ -55,8 +78,8 @@ export default function BlogsPage() {
     );
   }
 
-  const totalPages = Math.max(1, Math.ceil(((posts?.length as number) || 0) / postsPerPage));
-  const paginated = posts ? posts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage) : [];
+  const totalPages = Math.max(1, Math.ceil(((filteredPosts?.length as number) || 0) / postsPerPage));
+  const paginated = filteredPosts ? filteredPosts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage) : [];
   const isEmpty = !isLoading && (!posts || posts.length === 0);
 
   return (
@@ -70,6 +93,12 @@ export default function BlogsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="flex-1"
+          />
+          <Input
+            placeholder="Search by category..."
+            value={categorySearch}
+            onChange={(e) => setCategorySearch(e.target.value)}
+            className="w-64"
           />
           <Button
             variant={selectedCategory === null ? "default" : "outline"}
@@ -95,16 +124,16 @@ export default function BlogsPage() {
               <FileText className="mx-auto mb-4 text-gray-400" size={48} />
               <h3 className="text-2xl font-semibold mb-2">No blogs yet</h3>
               <p className="text-gray-600 dark:text-gray-300 mb-6">There are no posts to show. Start by creating your first blog post to engage readers.</p>
-              <a href="/posts/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700">
+              <a href="/blog/create" className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700">
                 <PlusCircle size={18} /> Create your first post
               </a>
             </div>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
-            {paginated.map((post: any, idx: number) => (
-              <BlogCard key={post.id} post={post} />
-            ))}
+              {paginated.map((post: any, idx: number) => (
+                <BlogCard key={post.id} post={post} search={search} selectedCategory={selectedCategory ?? undefined} />
+              ))}
           </div>
         )}
 

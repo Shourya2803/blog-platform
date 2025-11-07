@@ -4,13 +4,16 @@ import { router, publicProcedure } from "../trpc";
 import { posts, post_categories, categories } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { slugify } from "../../../lib/slugify";
+import { uploadImageToCloudinary } from "../../utils/cloudinary";
 
-// input schemas
+
+// input schemas (accept the shape coming from the client)
 const createPostSchema = z.object({
-  title: z.string().min(1),
-  content: z.string().min(1),
-  published: z.boolean().optional(),
+  title: z.string().min(3, "Title is required"),
+  content: z.string().min(10, "Content is required"),
   categoryIds: z.array(z.number()).optional(),
+  image_url: z.string().url().optional().or(z.literal("")).optional(),
+  published: z.boolean().optional(),
 });
 
 const updatePostSchema = createPostSchema.extend({
@@ -27,6 +30,7 @@ export const postRouter = router({
         slug,
         content: input.content,
         published: input.published ?? false,
+        image_url: input.image_url ?? "",
       })
       .returning();
 
@@ -53,19 +57,44 @@ export const postRouter = router({
           content: posts.content,
           published: posts.published,
           created_at: posts.created_at,
+          image_url: posts.image_url,
           category_id: post_categories.category_id,
           category_name: categories.name,
         })
         .from(posts)
         .leftJoin(post_categories, eq(post_categories.post_id, posts.id))
         .leftJoin(categories, eq(post_categories.category_id, categories.id))
-  .orderBy(posts.created_at);
+        .orderBy(posts.created_at);
 
       if (input?.categoryId) {
         q.where(eq(post_categories.category_id, input.categoryId));
       }
 
-      return await q;
+      const rows = await q;
+
+      // group rows by post id and aggregate categories into an array
+      const map = new Map<number, any>();
+      for (const r of rows) {
+        const id = r.id as number;
+        if (!map.has(id)) {
+          map.set(id, {
+            id: r.id,
+            title: r.title,
+            slug: r.slug,
+            content: r.content,
+            published: r.published,
+            created_at: r.created_at,
+            image_url: r.image_url,
+            categories: [],
+          });
+        }
+        if (r.category_id) {
+          const entry = map.get(id);
+          entry.categories.push({ id: r.category_id, name: r.category_name });
+        }
+      }
+
+      return Array.from(map.values());
     }),
 
   getBySlug: publicProcedure.input(z.object({ slug: z.string() })).query(async ({ input, ctx }) => {
@@ -77,6 +106,7 @@ export const postRouter = router({
         content: posts.content,
         published: posts.published,
         created_at: posts.created_at,
+        image_url: posts.image_url,
         category_id: categories.id,
         category_name: categories.name,
       })
@@ -86,9 +116,9 @@ export const postRouter = router({
       .leftJoin(categories, eq(post_categories.category_id, categories.id));
 
     if (rows.length === 0) return null;
-    const { id, title, slug, content, published, created_at } = rows[0];
+    const { id, title, slug, content, published, created_at, image_url } = rows[0];
     const cats = rows.filter((r) => r.category_id).map((r) => ({ id: r.category_id, name: r.category_name }));
-    return { id, title, slug, content, published, created_at, categories: cats };
+    return { id, title, slug, content, published, created_at, image_url, categories: cats };
   }),
 
   update: publicProcedure.input(updatePostSchema).mutation(async ({ input, ctx }) => {

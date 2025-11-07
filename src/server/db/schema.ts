@@ -6,7 +6,7 @@ export const posts = pgTable("posts", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   content: text("content").notNull(),
   published: boolean("published").default(false).notNull(),
-  image_url: varchar("image_url", { length: 500 }).default("").notNull(), // new column for Cloudinary URL
+  image_url: varchar("image_url", { length: 500 }).default("").notNull(), 
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull()
 });
