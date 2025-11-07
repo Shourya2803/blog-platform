@@ -25,9 +25,12 @@ export default function BlogsPage() {
   const { data: posts, isLoading, isError } = trpc.post.getAll.useQuery();
   const { data: categories } = trpc.category.getAll.useQuery();
 
-  // Recent posts derived client-side from posts (most recently created first)
-  const recentPosts = posts
-    ? [...posts]
+  // Only consider posts that are published for public listing
+  const allPosts = (posts ?? []).filter((p: any) => Boolean(p?.published));
+
+  // Recent posts derived client-side from published posts (most recently created first)
+  const recentPosts = allPosts
+    ? [...allPosts]
         .sort((a: any, b: any) => {
           const ad = a?.created_at ? new Date(a.created_at).getTime() : 0;
           const bd = b?.created_at ? new Date(b.created_at).getTime() : 0;
@@ -37,7 +40,6 @@ export default function BlogsPage() {
     : undefined;
 
   // filter posts by title search, selected category, and category search
-  const allPosts = posts ?? [];
   const filteredPosts = allPosts.filter((p: any) => {
     const matchesSearch = !search.trim() || (p?.title && p.title.toLowerCase().includes(search.toLowerCase()));
     const matchesSelectedCategory = !selectedCategory ? true : (p?.categories || []).some((c: any) => c.name === selectedCategory);
@@ -81,7 +83,7 @@ export default function BlogsPage() {
 
   const totalPages = Math.max(1, Math.ceil(((filteredPosts?.length as number) || 0) / postsPerPage));
   const paginated = filteredPosts ? filteredPosts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage) : [];
-  const isEmpty = !isLoading && (!posts || posts.length === 0);
+  const isEmpty = !isLoading && (!allPosts || allPosts.length === 0);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-4 gap-10">
@@ -130,7 +132,7 @@ export default function BlogsPage() {
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
               {paginated.map((post: any, idx: number) => (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
+                <Link key={post.id} href={`/blog/${post.slug}`} className="block h-full">
                   <BlogCard post={post} search={search} selectedCategory={selectedCategory ?? undefined} />
                 </Link>
               ))}

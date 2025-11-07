@@ -170,9 +170,15 @@ export default function CreatePostPage() {
         image_url: data.image_url ?? "",
         categoryIds: data.categoryIds ?? [],
       } as any);
-      // show toast and navigate
-      toast.showToast("Post created", "success");
-      router.push("/blog");
+      // show contextual toast and navigate
+      const wasPublished = Boolean(data.published);
+      if (wasPublished) {
+        toast.showToast("Post published", "success");
+        router.push("/blog");
+      } else {
+        toast.showToast("Saved to drafts", "success");
+        router.push("/drafts");
+      }
     } catch (err: any) {
       console.error("Create post failed", err);
       toast.showToast(err?.message ?? "Failed to create post", "error");

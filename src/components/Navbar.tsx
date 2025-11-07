@@ -29,7 +29,7 @@ export default function Navbar() {
           <NavLink href="/">Home</NavLink>
           <NavLink href="/blog">Blogs</NavLink>
             <NavLink href="/blog/create">New Post</NavLink>
-          <NavLink href="/draft">Draft</NavLink>
+          <NavLink href="/drafts">Draft</NavLink>
         </div>
 
         {/* Right: Theme Toggle */}

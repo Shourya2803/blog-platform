@@ -149,4 +149,23 @@ export const postRouter = router({
     await ctx.db.delete(posts).where(eq(posts.id, input.id));
     return { success: true };
   }),
+  getDrafts: publicProcedure.query(async ({ ctx }) => {
+    const rows = await ctx.db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        slug: posts.slug,
+        content: posts.content,
+        created_at: posts.created_at,
+        image_url: posts.image_url,
+        published: posts.published,
+      })
+      .from(posts)
+      .where(eq(posts.published, false))
+      .orderBy(posts.created_at);
+
+    return rows;
+  }),
 });
+
+

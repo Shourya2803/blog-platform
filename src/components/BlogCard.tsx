@@ -58,7 +58,7 @@ export default function BlogCard({ post, search, selectedCategory }: { post: any
 
   return (
     <motion.div
-      className="overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer"
+      className="h-full flex flex-col overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer"
       whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(167,139,250,0.4)" }}
     >
       {/* Image */}
@@ -81,8 +81,8 @@ export default function BlogCard({ post, search, selectedCategory }: { post: any
         )}
       </div>
 
-      <div className="p-6">
-  
+      <div className="p-6 flex flex-col flex-1">
+
   <h2 className="text-2xl font-semibold text-purple-600 mb-2">{titleNode}</h2>
 
         <div className="flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400 mb-3">
@@ -90,7 +90,7 @@ export default function BlogCard({ post, search, selectedCategory }: { post: any
           <div> {readingTime} min read · {wordCount} words</div>
         </div>
 
-        <p className="text-zinc-600 dark:text-zinc-400 mb-4 line-clamp-3">{contentText}</p>
+        <p className="text-zinc-600 dark:text-zinc-400 mb-4 line-clamp-3 flex-1">{contentText}</p>
 
         <div className="flex flex-wrap gap-2 mt-3">
           {categories.map((cat: any) => {
