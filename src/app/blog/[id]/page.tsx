@@ -204,17 +204,43 @@ export default function BlogDetailPage() {
           <div>
             <label className="block text-sm font-medium mb-2">Content</label>
 
-            {/* Toolbar */}
+            {/* Toolbar (bold / italic / underline / link only) */}
             <div className="flex flex-wrap gap-2 mb-2">
-              <button type="button" onClick={() => applyFormat('bold')} className="px-2 py-1 rounded-md border">B</button>
-              <button type="button" onClick={() => applyFormat('italic')} className="px-2 py-1 rounded-md border">I</button>
-              <button type="button" onClick={() => applyFormat('underline')} className="px-2 py-1 rounded-md border">U</button>
-              <button type="button" onClick={() => applyFormat('formatBlock', 'H2')} className="px-2 py-1 rounded-md border">H2</button>
-              <button type="button" onClick={() => applyFormat('insertUnorderedList')} className="px-2 py-1 rounded-md border">• List</button>
-              <button type="button" onClick={() => applyFormat('insertOrderedList')} className="px-2 py-1 rounded-md border">1. List</button>
-              <button type="button" onClick={() => insertLink()} className="px-2 py-1 rounded-md border">Link</button>
-              <button type="button" onClick={() => applyFormat('formatBlock', 'PRE')} className="px-2 py-1 rounded-md border">Code</button>
-              <button type="button" onClick={() => applyFormat('removeFormat')} className="px-2 py-1 rounded-md border">Clear</button>
+              <button
+                type="button"
+                onClick={() => applyFormat('bold')}
+                className="px-2 py-1 rounded-md border"
+                aria-label="Bold"
+              >
+                B
+              </button>
+
+              <button
+                type="button"
+                onClick={() => applyFormat('italic')}
+                className="px-2 py-1 rounded-md border"
+                aria-label="Italic"
+              >
+                I
+              </button>
+
+              <button
+                type="button"
+                onClick={() => applyFormat('underline')}
+                className="px-2 py-1 rounded-md border"
+                aria-label="Underline"
+              >
+                U
+              </button>
+
+              <button
+                type="button"
+                onClick={() => insertLink()}
+                className="px-2 py-1 rounded-md border"
+                aria-label="Insert link"
+              >
+                Link
+              </button>
             </div>
 
             {/* Editable area (do not set innerHTML via props on every render — that resets caret) */}

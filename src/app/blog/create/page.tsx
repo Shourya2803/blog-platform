@@ -219,76 +219,62 @@ export default function CreatePostPage() {
                   type="button"
                   className="px-2 py-1 rounded border"
                   onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => document.execCommand("bold")}
+                  onClick={() => {
+                    const el = editorRef.current;
+                    if (el) el.focus();
+                    document.execCommand("bold");
+                  }}
                   aria-label="Bold"
                 >
                   B
                 </button>
+
                 <button
                   type="button"
                   className="px-2 py-1 rounded border"
                   onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => document.execCommand("italic")}
+                  onClick={() => {
+                    const el = editorRef.current;
+                    if (el) el.focus();
+                    document.execCommand("italic");
+                  }}
                   aria-label="Italic"
                 >
                   I
                 </button>
+
                 <button
                   type="button"
                   className="px-2 py-1 rounded border"
                   onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => document.execCommand("underline")}
+                  onClick={() => {
+                    const el = editorRef.current;
+                    if (el) el.focus();
+                    document.execCommand("underline");
+                  }}
                   aria-label="Underline"
                 >
                   U
                 </button>
-                <button
-                  type="button"
-                  className="px-2 py-1 rounded border"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => document.execCommand("insertUnorderedList")}
-                  aria-label="Bullet list"
-                >
-                  • List
-                </button>
-                <button
-                  type="button"
-                  className="px-2 py-1 rounded border"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => document.execCommand("insertOrderedList")}
-                  aria-label="Numbered list"
-                >
-                  1. List
-                </button>
+
                 <button
                   type="button"
                   className="px-2 py-1 rounded border"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => {
                     const url = prompt("Enter URL:");
-                    if (url) document.execCommand("createLink", false, url);
+                    if (!url) return;
+                    const el = editorRef.current;
+                    if (el) el.focus();
+                    try {
+                      document.execCommand("createLink", false, url);
+                    } catch (err) {
+                      console.error("createLink failed", err);
+                    }
                   }}
                   aria-label="Link"
                 >
                   🔗
-                </button>
-                <button
-                  type="button"
-                  className="px-2 py-1 rounded border"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => document.execCommand("formatBlock", false, "H2")}
-                  aria-label="Heading"
-                >
-                  H2
-                </button>
-                <button
-                  type="button"
-                  className="px-2 py-1 rounded border"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => document.execCommand("removeFormat")}
-                  aria-label="Clear formatting"
-                >
-                  Clear
                 </button>
               </div>
 
