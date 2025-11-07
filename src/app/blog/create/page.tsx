@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc";
+import { useToast } from "@/components/ToastProvider";
 // NOTE: react-quill removed to avoid build-time dependency; using textarea fallback instead.
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,7 @@ export default function CreatePostPage() {
   const createPost = trpc.post.create.useMutation();
   const createCategory = trpc.category.create.useMutation();
   const utils = trpc.useContext();
+  const toast = useToast();
 
   const [localPreview, setLocalPreview] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -168,10 +170,12 @@ export default function CreatePostPage() {
         image_url: data.image_url ?? "",
         categoryIds: data.categoryIds ?? [],
       } as any);
+      // show toast and navigate
+      toast.showToast("Post created", "success");
       router.push("/blog");
     } catch (err: any) {
       console.error("Create post failed", err);
-      alert(err?.message ?? "Failed to create post");
+      toast.showToast(err?.message ?? "Failed to create post", "error");
     }
   };
 
@@ -188,13 +192,13 @@ export default function CreatePostPage() {
           <Card className="border border-zinc-200 dark:border-zinc-800 shadow-md">
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-zinc-800 dark:text-zinc-100">
-                ✍️ Create a New Post
+                 Create a New Post
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="space-y-8 text-zinc-700 dark:text-zinc-200"
+                className="space-y-9 text-zinc-700 dark:text-zinc-200"
               >
             {/* Title */}
             <div>
@@ -257,25 +261,7 @@ export default function CreatePostPage() {
                   U
                 </button>
 
-                <button
-                  type="button"
-                  className="px-2 py-1 rounded border"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => {
-                    const url = prompt("Enter URL:");
-                    if (!url) return;
-                    const el = editorRef.current;
-                    if (el) el.focus();
-                    try {
-                      document.execCommand("createLink", false, url);
-                    } catch (err) {
-                      console.error("createLink failed", err);
-                    }
-                  }}
-                  aria-label="Link"
-                >
-                  🔗
-                </button>
+               
               </div>
 
               <div

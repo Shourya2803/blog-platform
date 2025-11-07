@@ -1,16 +1,19 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { trpc } from "@/utils/trpc";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Edit2, Save, X } from "lucide-react";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import { useToast } from "@/components/ToastProvider";
 
 export default function BlogDetailPage() {
   const { id } = useParams();
   const { data: post, isLoading, isError } = trpc.post.getBySlug.useQuery({ slug: String(id) });
+  const router = useRouter();
 
   // Hooks that must run on every render (avoid conditional hooks)
   const utils = trpc.useContext();
@@ -19,6 +22,17 @@ export default function BlogDetailPage() {
       // invalidate queries so UI refreshes
       await utils.post.getBySlug.invalidate({ slug: String(id) });
       await utils.post.getAll.invalidate();
+    },
+  });
+  const deleteMutation = trpc.post.delete.useMutation({
+    onSuccess: async () => {
+      await utils.post.getAll.invalidate();
+      // navigate back to list after deletion
+      router.push("/blog");
+    },
+    onError: (err) => {
+      console.error("Delete failed", err);
+      alert(err?.message ?? "Failed to delete post");
     },
   });
 
@@ -77,7 +91,36 @@ export default function BlogDetailPage() {
     setEditing(false);
   };
 
-  const saveEdit = async () => {
+  // saveEdit replaced by doSave (which shows toast)
+
+  const toast = useToast();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const handleDelete = async () => {
+    if (!post) return;
+    setConfirmOpen(true);
+  };
+
+  const doDelete = async () => {
+    if (!post) return;
+    try {
+      deleteMutation.mutate({ id: post.id }, {
+        onSuccess: () => {
+          toast.showToast("Post deleted", "success");
+        },
+        onError: (err: any) => {
+          toast.showToast(err?.message ?? "Failed to delete post", "error");
+        }
+      });
+    } catch (err) {
+      console.error("Delete mutation failed", err);
+      toast.showToast("Delete failed", "error");
+    } finally {
+      setConfirmOpen(false);
+    }
+  };
+
+  const doSave = () => {
     if (!post) return;
     updateMutation.mutate({
       id: post.id,
@@ -86,7 +129,13 @@ export default function BlogDetailPage() {
       categoryIds: selectedCategoryIds,
       published: publishedValue,
     }, {
-      onSuccess: () => setEditing(false),
+      onSuccess: () => {
+        setEditing(false);
+        toast.showToast("Post saved", "success");
+      },
+      onError: (err: any) => {
+        toast.showToast(err?.message ?? "Failed to save post", "error");
+      }
     });
   };
 
@@ -154,18 +203,29 @@ export default function BlogDetailPage() {
         {/* Edit controls */}
         <div className="flex items-center gap-2">
           {!editing ? (
-            <button
-              type="button"
-              onClick={startEdit}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-gray-100 dark:bg-zinc-800 text-sm"
-            >
-              <Edit2 size={16} /> Edit
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={startEdit}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-gray-100 dark:bg-zinc-800 text-sm"
+              >
+                <Edit2 size={16} /> Edit
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleteMutation.status === 'pending'}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-red-600 text-white text-sm"
+              >
+                Delete
+              </button>
+            </>
           ) : (
             <>
               <button
                 type="button"
-                onClick={saveEdit}
+                onClick={doSave}
                 disabled={updateMutation.status === 'pending'}
                 className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-green-600 text-white text-sm"
               >
@@ -189,6 +249,15 @@ export default function BlogDetailPage() {
           <Image src={post.image_url} alt={post.title} fill className="object-cover" />
         </div>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete post"
+        description="Are you sure you want to permanently delete this post? This cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirmAction={doDelete}
+        onCancelAction={() => setConfirmOpen(false)}
+      />
 
       <h1 className="text-4xl font-bold text-purple-700 mb-4">{post.title}</h1>
       <div className="flex justify-between text-sm text-gray-500 mb-6">
@@ -236,14 +305,7 @@ export default function BlogDetailPage() {
                 U
               </button>
 
-              <button
-                type="button"
-                onClick={() => insertLink()}
-                className="px-2 py-1 rounded-md border"
-                aria-label="Insert link"
-              >
-                Link
-              </button>
+              {/* Link insertion removed — lightweight editor does not support link insertion */}
             </div>
 
             {/* Editable area (do not set innerHTML via props on every render — that resets caret) */}
