@@ -52,9 +52,9 @@ export default function Footer() {
           {/* Social Icons */}
           <div className="flex gap-4 items-center">
             {[
-              { icon: <Github className="w-5 h-5" />, href: "https://github.com/" },
-              { icon: <Linkedin className="w-5 h-5" />, href: "https://linkedin.com/" },
-              { icon: <Mail className="w-5 h-5" />, href: "mailto:example@myblog.com" },
+              { icon: <Github className="w-5 h-5" />, href: "https://github.com/Shourya2803/" },
+              { icon: <Linkedin className="w-5 h-5" />, href: "https://www.linkedin.com/in/shourya-mittal-160028283/" },
+              { icon: <Mail className="w-5 h-5" />, href: "mittalshourya2803@gmail.com" },
             ].map(({ icon, href }, idx) => (
               <div key={idx} className="relative group">
                 <motion.a
