@@ -45,7 +45,7 @@ export default function Features() {
           Powerful Features for Every Writer
         </h2>
 
-        <div className="grid md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={index}
@@ -53,7 +53,7 @@ export default function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.12 }}
-              className="relative p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg transition-transform duration-300 ease-out group hover:-translate-y-1"
+              className="relative p-6 sm:p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg transition-transform duration-300 ease-out group hover:-translate-y-1"
             >
               {/* glow layer */}
               <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
