@@ -28,6 +28,9 @@ export default function BlogDetailPage() {
   const [publishedValue, setPublishedValue] = useState(false);
 
   const { data: allCategories } = trpc.category.getAll.useQuery();
+  const createCategory = trpc.category.create.useMutation();
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [addingCategory, setAddingCategory] = useState(false);
   const contentRef = useRef<HTMLDivElement | null>(null);
 
   const applyFormat = (cmd: string, value?: string) => {
@@ -255,6 +258,56 @@ export default function BlogDetailPage() {
 
           <div>
             <label className="block text-sm font-medium mb-2">Categories</label>
+            <div className="flex items-center gap-2 mb-2">
+              <input
+                type="text"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                placeholder="New category"
+                className="px-2 py-1 rounded-md border bg-white dark:bg-zinc-900 text-sm"
+                onKeyDown={async (e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (!newCategoryName.trim()) return;
+                    try {
+                      setAddingCategory(true);
+                      const created = await createCategory.mutateAsync({ name: newCategoryName.trim() });
+                      await utils.category.getAll.invalidate();
+                      setSelectedCategoryIds((prev) => [...prev, created.id]);
+                      setNewCategoryName("");
+                    } catch (err) {
+                      console.error("Failed to create category", err);
+                      alert("Failed to create category");
+                    } finally {
+                      setAddingCategory(false);
+                    }
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!newCategoryName.trim()) return;
+                  try {
+                    setAddingCategory(true);
+                    const created = await createCategory.mutateAsync({ name: newCategoryName.trim() });
+                    await utils.category.getAll.invalidate();
+                    setSelectedCategoryIds((prev) => [...prev, created.id]);
+                    setNewCategoryName("");
+                  } catch (err) {
+                    console.error("Failed to create category", err);
+                    alert("Failed to create category");
+                  } finally {
+                    setAddingCategory(false);
+                  }
+                }}
+                className="px-3 py-1 rounded-md bg-purple-600 text-white text-sm"
+                disabled={addingCategory}
+              >
+                {addingCategory ? "Adding..." : "Add"}
+              </button>
+            </div>
+
             <div className="flex flex-wrap gap-2">
               {(allCategories || []).map((cat: any) => {
                 const checked = selectedCategoryIds.includes(cat.id);
