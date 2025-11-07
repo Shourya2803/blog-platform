@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc";
+// NOTE: react-quill removed to avoid build-time dependency; using textarea fallback instead.
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,6 +43,7 @@ type CreatePostForm = z.infer<typeof createPostSchema>;
 
 export default function CreatePostPage() {
   const router = useRouter();
+  // quillRef removed since react-quill is not used
 
   // tRPC
   const { data: categories = [], isLoading: catsLoading } =
@@ -76,10 +78,25 @@ export default function CreatePostPage() {
 
   const selectedCategories = watch("categoryIds");
 
+  const editorRef = useRef<HTMLDivElement | null>(null);
+  const lastEditorHtml = useRef<string>("");
+
+
   // Live preview derived from form state + upload/local preview
   const watchedTitle = watch("title");
   const watchedContent = watch("content");
   const watchedImageUrl = watch("image_url");
+  // Sync external content -> editor, but avoid clobbering while user is typing
+  useEffect(() => {
+    const el = editorRef.current;
+    if (!el) return;
+    if (document.activeElement === el) return; // don't update while focused (typing)
+    const target = watchedContent || "";
+    if (el.innerHTML !== target) {
+      el.innerHTML = target;
+      lastEditorHtml.current = target;
+    }
+  }, [watchedContent]);
   const previewCategories = categories.filter((c) =>
     selectedCategories.includes(c.id)
   );
@@ -194,19 +211,107 @@ export default function CreatePostPage() {
               )}
             </div>
 
-            {/* Content */}
+            {/* Content - lightweight contentEditable rich editor (no external deps) */}
             <div>
               <Label htmlFor="content">Content</Label>
-              <Textarea
-                id="content"
-                {...register("content")}
-                rows={6}
-                placeholder="Write your post content..."
+              <div className="mt-2 mb-1 flex gap-2">
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => document.execCommand("bold")}
+                  aria-label="Bold"
+                >
+                  B
+                </button>
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => document.execCommand("italic")}
+                  aria-label="Italic"
+                >
+                  I
+                </button>
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => document.execCommand("underline")}
+                  aria-label="Underline"
+                >
+                  U
+                </button>
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => document.execCommand("insertUnorderedList")}
+                  aria-label="Bullet list"
+                >
+                  • List
+                </button>
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => document.execCommand("insertOrderedList")}
+                  aria-label="Numbered list"
+                >
+                  1. List
+                </button>
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    const url = prompt("Enter URL:");
+                    if (url) document.execCommand("createLink", false, url);
+                  }}
+                  aria-label="Link"
+                >
+                  🔗
+                </button>
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => document.execCommand("formatBlock", false, "H2")}
+                  aria-label="Heading"
+                >
+                  H2
+                </button>
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded border"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => document.execCommand("removeFormat")}
+                  aria-label="Clear formatting"
+                >
+                  Clear
+                </button>
+              </div>
+
+              <div
+                id="editor"
+                ref={editorRef}
+                contentEditable
+                suppressContentEditableWarning
+                className="min-h-40 rounded border px-3 py-2 bg-white text-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+                onInput={(e) => {
+                  const html = (e.target as HTMLDivElement).innerHTML;
+                  lastEditorHtml.current = html;
+                  setValue("content", html, { shouldValidate: true, shouldDirty: true });
+                }}
+                onBlur={(e) => {
+                  const html = (e.target as HTMLDivElement).innerHTML;
+                  lastEditorHtml.current = html;
+                  setValue("content", html, { shouldValidate: true, shouldDirty: true });
+                }}
               />
+
               {errors.content && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.content.message}
-                </p>
+                <p className="mt-1 text-sm text-red-500">{errors.content.message}</p>
               )}
             </div>
 

@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { FileText, PlusCircle } from "lucide-react";
 
 import BlogCard from "@/components/BlogCard";
+import Link from "next/link";
 
 import RecentPostCard from "@/components/RecentPostCard";
 
@@ -132,7 +133,9 @@ export default function BlogsPage() {
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
               {paginated.map((post: any, idx: number) => (
-                <BlogCard key={post.id} post={post} search={search} selectedCategory={selectedCategory ?? undefined} />
+                <Link key={post.id} href={`/blog/${post.slug}`}>
+                  <BlogCard post={post} search={search} selectedCategory={selectedCategory ?? undefined} />
+                </Link>
               ))}
           </div>
         )}

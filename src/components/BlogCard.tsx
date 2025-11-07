@@ -87,7 +87,7 @@ export default function BlogCard({ post, search, selectedCategory }: { post: any
 
         <div className="flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400 mb-3">
           <div>{createdLabel}</div>
-          <div> {wordCount} words</div>
+          <div> {readingTime} min read · {wordCount} words</div>
         </div>
 
         <p className="text-zinc-600 dark:text-zinc-400 mb-4 line-clamp-3">{contentText}</p>

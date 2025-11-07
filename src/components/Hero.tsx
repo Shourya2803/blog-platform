@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
+  const router = useRouter();
   return (
     <section className="flex flex-col items-center justify-center text-center py-20 bg-white dark:bg-gray-900 transition-colors">
       <motion.h1
@@ -29,7 +31,10 @@ export default function Hero() {
       >
         <div className="relative inline-block group">
           <span className="pointer-events-none absolute -inset-1 rounded-full blur-3xl bg-linear-to-r from-purple-400 via-pink-400 to-indigo-400 opacity-0 group-hover:opacity-30 transition-opacity" />
-          <Button className="relative z-10 bg-purple-600 hover:bg-purple-700 text-white rounded-full px-6 py-3">
+          <Button
+            className="relative z-10 bg-purple-600 hover:bg-purple-700 text-white rounded-full px-6 py-3"
+            onClick={() => router.push('/blog/create')}
+          >
             Start Writing →
           </Button>
         </div>
