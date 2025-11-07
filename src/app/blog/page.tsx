@@ -101,21 +101,18 @@ export default function BlogsPage() {
             onChange={(e) => setCategorySearch(e.target.value)}
             className="w-64"
           />
-          <Button
-            variant={selectedCategory === null ? "default" : "outline"}
-            onClick={() => setSelectedCategory(null)}
+          <label className="sr-only" htmlFor="category-select">Filter by category</label>
+          <select
+            id="category-select"
+            value={selectedCategory ?? ""}
+            onChange={(e) => setSelectedCategory(e.target.value || null)}
+            className="rounded-md border px-3 py-2 bg-white dark:bg-zinc-900 text-sm"
           >
-            All
-          </Button>
-          {categories?.map((cat) => (
-            <Button
-              key={cat.id}
-              variant={selectedCategory === cat.name ? "default" : "outline"}
-              onClick={() => setSelectedCategory(cat.name)}
-            >
-              {cat.name}
-            </Button>
-          ))}
+            <option value="">All</option>
+            {categories?.map((cat) => (
+              <option key={cat.id} value={cat.name}>{cat.name}</option>
+            ))}
+          </select>
         </div>
 
         {/* Posts Grid */}
