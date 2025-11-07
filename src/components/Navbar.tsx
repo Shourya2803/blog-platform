@@ -73,7 +73,7 @@ export default function Navbar() {
 
         {/* Center: Navigation Links (render only on non-mobile to guard against missing Tailwind responsive CSS) */}
         {!isMobile && (
-          <div className="hidden md:flex items-center gap-6 md:gap-10 lg:gap-12 text-gray-700 dark:text-gray-300 text-sm  md:text-lg lg:text-2xl">
+          <div className="hidden md:flex items-center gap-6 md:gap-10 lg:gap-12 text-gray-700 dark:text-gray-300 text-sm  md:text-lg lg:text-xl">
             <NavLink href="/">Home</NavLink>
             <NavLink href="/blog">Blogs</NavLink>
             <NavLink href="/blog/create">New Post</NavLink>
