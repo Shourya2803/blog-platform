@@ -1,36 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📝 Blog Management System
 
-## Getting Started
+This is a **Next.js** project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).  
+It’s a full-stack **Blog Management System** built with **Next.js**, **tRPC**, **Drizzle ORM**, **Zod**, **shadcn/ui**, and **Cloudinary** — allowing users to **create**, **edit**, **save drafts**, and **publish blogs** seamlessly.
 
-First, run the development server:
+---
 
+## 🚀 Getting Started
+
+### 1️⃣ Clone the repository
 ```bash
+git clone <your-repo-link>
+cd blog-management
+2️⃣ Install dependencies
+bash
+Copy code
+npm install
+# or
+yarn install
+# or
+pnpm install
+3️⃣ Set up environment variables
+Create a .env file in the root directory and add:
+
+bash
+Copy code
+DATABASE_URL=your_database_url
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+4️⃣ Run database migrations (if using Drizzle)
+bash
+Copy code
+npm run db:push
+5️⃣ Run the development server
+bash
+Copy code
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
-```
+Now open http://localhost:3000 to view the app in your browser.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🧰 Tech Stack Used
+⚛️ Next.js 14 – App Router for full-stack React
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+⚡ tRPC – Type-safe APIs between frontend and backend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🪶 Drizzle ORM – Lightweight SQL ORM
 
-## Learn More
+🧩 Zod – Schema validation
 
-To learn more about Next.js, take a look at the following resources:
+🎨 shadcn/ui – Reusable accessible UI components
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+☁️ Cloudinary – Image upload & optimization
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🧠 Framer Motion – Smooth UI animations
 
-## Deploy on Vercel
+💾 PostgreSQL – Database
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+✨ Features Implemented
+🥇 Priority 1 – Core Features
+✅ Create new blog posts with title, content, categories, and image
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+✅ Upload images using Cloudinary
+
+✅ Validation using Zod
+
+✅ View all published blogs
+
+🥈 Priority 2 – Editing & Draft Management
+✅ Edit existing blogs (title, content, categories, publish status)
+
+✅ Draft system: posts with published = false shown on a separate Drafts Page
+
+✅ Individual detailed blog page
+
+🥉 Priority 3 – UI & Extras
+✅ Modern UI built with shadcn/ui and Tailwind CSS
+
+✅ Framer Motion animations for transitions
+
+✅ Word count and estimated reading time
+
+✅ Responsive design for mobile and desktop
+
+⚖️ Trade-offs & Design Decisions
+Chose tRPC for direct type-safe communication instead of REST for simplicity and safety.
+
+Used Drizzle ORM for lightweight schema control and SQL visibility.
+
+Skipped image editing in edit mode to reduce complexity.
+
+Stored drafts and published posts in the same table to simplify schema and filtering logic.
+
+⏱️ Time Spent
+Task	Time
+Setting up project & DB schema	2 hrs
+Building API routes with tRPC	3 hrs
+Integrating Cloudinary upload	1 hr
+UI development with shadcn/ui	3 hrs
+Adding edit & draft functionality	2 hrs
+Testing & documentation	1 hr
+
+📦 Deployment
+You can deploy this project easily using Vercel:
+
+Push your repository to GitHub
+
+Connect your repo on Vercel
+
+Add the same .env variables in Vercel dashboard
+
+Deploy 🚀
+
+📚 Learn More
+To learn more about the main tools used:
+
+Next.js Documentation
+
+tRPC Docs
+
+Drizzle ORM
+
+Zod Validation
+
+shadcn/ui
+
+Cloudinary Docs
+
+🧑‍💻 Author
+Made with ❤️ by Shourya Mittal
+
+yaml
+Copy code
+
+---
+
+Would you like me to also generate a **short version** (for submission or repo overview) below thi
