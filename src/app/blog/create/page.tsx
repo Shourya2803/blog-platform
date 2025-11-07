@@ -124,7 +124,7 @@ export default function CreatePostPage() {
       reader.readAsDataURL(file);
     } catch (err) {
       console.error("Image upload failed", err);
-      alert("Image upload failed.");
+      toast.showToast("Image upload failed.", "error");
     } finally {
       setUploadingImage(false);
     }
@@ -147,16 +147,18 @@ export default function CreatePostPage() {
       setOpen(false);
     } catch (err) {
       console.error("Failed to create category", err);
-      alert("Failed to create category");
+      toast.showToast("Failed to create category", "error");
     }
   };
 
   const onSubmit = async (data: CreatePostForm) => {
     if (!data.image_url && localPreview && !uploadedImageUrl) {
-      alert("Please wait for image upload to finish.");
+      toast.showToast("Please wait — image is still uploading", "info");
       return;
     }
     try {
+      // show a quick loading toast when starting the create request
+      toast.showToast("Creating post...", "info");
       await createPost.mutateAsync({
         title: data.title,
         content: data.content,
