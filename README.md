@@ -1,140 +1,122 @@
-# 📝 Blog Management System
+# Blogify — Next.js Blog Platform
 
-This is a **Next.js** project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).  
-It’s a full-stack **Blog Management System** built with **Next.js**, **tRPC**, **Drizzle ORM**, **Zod**, **shadcn/ui**, and **Cloudinary** — allowing users to **create**, **edit**, **save drafts**, and **publish blogs** seamlessly.
+An opinionated blog platform built with the Next.js App Router, TypeScript and Tailwind CSS. It includes a simple content editor, live post preview, category management, client-side toasts, and a small set of admin flows (create/drafts/edit). This README explains how to run the project, what it uses, and important design decisions.
+
+## ⚙️ 1) Setup — Run Locally
+
+### 🧩 Prerequisites
+Before you begin, make sure you have the following installed:
+- **Node.js 18+** (LTS recommended)
+- **npm**, **pnpm**, or **yarn**
+- **Git**
+- **PostgreSQL** (or **Neon**, a hosted Postgres-compatible service)
 
 ---
 
-## 🚀 Getting Started
+### 📦 Install Dependencies
 
-### 1️⃣ Clone the repository
+Clone the repository and install dependencies:
+
 ```bash
-git clone <your-repo-link>
-cd blog-management
-2️⃣ Install dependencies
-bash
-Copy code
+# from repository root
 npm install
 # or
 yarn install
 # or
 pnpm install
-3️⃣ Set up environment variables
-Create a .env file in the root directory and add:
 
-bash
-Copy code
-DATABASE_URL=your_database_url
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-4️⃣ Run database migrations (if using Drizzle)
-bash
-Copy code
+#Database Setup
 npm run db:push
-5️⃣ Run the development server
-bash
-Copy code
+
+#Start Development Server
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-Now open http://localhost:3000 to view the app in your browser.
 
-🧰 Tech Stack Used
-⚛️ Next.js 14 – App Router for full-stack React
 
-⚡ tRPC – Type-safe APIs between frontend and backend
 
-🪶 Drizzle ORM – Lightweight SQL ORM
+## 2) Tech stack
 
-🧩 Zod – Schema validation
+- Next.js (App Router) — server- and client-side rendering, routing, and bundling.
+- ShadCN UI + TypeScript — type safety.
+- Tailwind CSS — utility-first styling.
+- framer-motion — small UI animations for cards and motion effects.
+- lucide-react — icons.
+- tRPC — typed client/server RPC calls.
+- Drizzle ORM (Postgres) — server-side database queries and schema.
+- React Query (@tanstack/react-query) — client-side caching for server data.
+- next-themes — theme toggling (light/dark).
+- next/image — optimized image component and remotePatterns configured for Cloudinary.
+- ToastProvider (custom) — app-wide toasts for non-blocking user feedback.
+- Neon DB - DATABASE
 
-🎨 shadcn/ui – Reusable accessible UI components
+Dev / build tools
+- TypeScript, ESLint (project linting), Prettier (formatting), Vercel/Next.js for deployment.
 
-☁️ Cloudinary – Image upload & optimization
+3rd-party services (optional)
+- Cloudinary — image hosting/transformations (configured via remote pattern).
 
-🧠 Framer Motion – Smooth UI animations
+## 3) Features implemented (checklist)
 
-💾 PostgreSQL – Database
+## 3) Features implemented (checklist)
 
-✨ Features Implemented
-🥇 Priority 1 – Core Features
-✅ Create new blog posts with title, content, categories, and image
+Priority 1 — Core app flows
+- [x] Blog listing (search + category filters): list posts and filter by title/categories.
+- [x] Create post form: title, image upload, category selection/creation, content editor (lightweight contentEditable), and live preview using a reusable `BlogCard` component.
+- [x] Post preview card (`BlogCard`): responsive, highlights selected categories, clickable category chips.
+- [x] Recent posts card (`RecentPostCard`): clickable links to post details.
+- [x] Global toasts: non-blocking success/error/info messages used across create/edit/delete flows.
+- [x] Drafts management: list and detail for drafts, with edit/delete flows.
 
-✅ Upload images using Cloudinary
+Priority 2 — UX polish & responsiveness
+- [x] Responsive navbar (compact on mobile, larger on desktop): mobile menu DOM rendered only when open to avoid extra visual area.
+- [x] Mobile-first create page: editor min-heights adjusted, preview sticky only on md+, full-width image preview on phones.
+- [x] Replace blocking alert dialogs with toasts and a "Creating post..." info toast during mutations.
+- [x] Search highlights in titles for matching terms.
 
-✅ Validation using Zod
+Priority 3 — Developer & infra
+- [x] Next.js image host configured for Cloudinary remote patterns.
+- [x] TypeScript + Tailwind integration.
+- [x] Rich-text editor: a built-in rich-text editor is available in the Create flow (lightweight, formatting toolbar and basic image support).
+- [ ] Persistent loading toast: currently the info toast auto-dismisses; we can change to a dismissable persistent toast while mutations run.
 
-✅ View all published blogs
+## 4) Trade-offs and decisions
 
-🥈 Priority 2 – Editing & Draft Management
-✅ Edit existing blogs (title, content, categories, publish status)
+- Providers split (SSR head + client providers): Initially providers (React Query, trpc client, theme, toasts) were inside `app/layout.tsx`. To ensure the viewport meta and other head metadata are present server-side, `app/layout.tsx` is now a server component and providers are moved into `src/components/Providers.tsx` which is a `"use client"` wrapper. This ensures correct SSR head output (fixes mobile viewport issues) but adds an extra client boundary. Trade-off: a small increase in client bundle for providers vs correct metadata on first paint.
+- Lightweight content editor (contentEditable): I chose a minimal editor to avoid shipping a heavy rich-text dependency (e.g., Slate/TipTap/Quill). This keeps the bundle small and speeds up iteration. Trade-off: less built-in formatting and fewer structured editing features. A future improvement is to add an optional rich editor behind a feature flag.
+- Toasts over blocking alerts: For better UX we replaced synchronous alert() with toasts for non-blocking error/success messages. This improves perceived performance and reduces modal interruptions.
+- Tailwind utility classes: Fast to implement and highly responsive. The project uses canonical class names (e.g. `min-h-40`) instead of arbitrary pixel values to keep consistency and enable JIT optimization.
+- No SSR-heavy data fetching on homepage: most data is fetched client-side with React Query for a snappier local dev experience and easier cache invalidation via tRPC. If SEO-heavy pages are needed, we can move specific routes to server components with prefetching.
 
-✅ Draft system: posts with published = false shown on a separate Drafts Page
+## 5) Estimated time spent (high-level)
+- Project scaffold & initial pages: ~2–4 hours
+- Create/Drafts flows + editor + preview: ~6–9 hours
+- Responsive polish, navbar, and mobile fixes: ~2–4 hours
+- Toasts, confirm dialog, and UX replacements: ~1–2 hours
+- Bug-fix & refactor (Providers + layout SSR): ~1–2 hours
 
-✅ Individual detailed blog page
+These are approximate and depend on testing/iterations.
 
-🥉 Priority 3 – UI & Extras
-✅ Modern UI built with shadcn/ui and Tailwind CSS
+## 6) Project structure / environment
 
-✅ Framer Motion animations for transitions
+Top-level layout (key folders):
 
-✅ Word count and estimated reading time
+- `src/app/` — Next.js App Router pages and layouts.
+	- `layout.tsx` — root layout; now a server component that includes `<head>` metadata.
+	- `page.tsx` — app root page.
+	- `blog/` — blog routes (listing `page.tsx`, create `page.tsx`, post `[id]/page.tsx`).
+	- `drafts/` — draft pages.
 
-✅ Responsive design for mobile and desktop
+- `src/components/` — shared presentational components
+	- `Navbar.tsx`, `BlogCard.tsx`, `RecentPostCard.tsx`, `ToastProvider.tsx`, `Providers.tsx` (client-only wrapper for providers).
 
-⚖️ Trade-offs & Design Decisions
-Chose tRPC for direct type-safe communication instead of REST for simplicity and safety.
+- `src/server/` — server-only code (e.g., database schema, server utils)
+	- `db/` — Drizzle schema and DB connection helpers.
 
-Used Drizzle ORM for lightweight schema control and SQL visibility.
+- `src/utils/` — client & server utilities (e.g., `trpc` client setup).
 
-Skipped image editing in edit mode to reduce complexity.
+- `public/` — static assets (icons, images).
 
-Stored drafts and published posts in the same table to simplify schema and filtering logic.
 
-⏱️ Time Spent
-Task	Time
-Setting up project & DB schema	2 hrs
-Building API routes with tRPC	3 hrs
-Integrating Cloudinary upload	1 hr
-UI development with shadcn/ui	3 hrs
-Adding edit & draft functionality	2 hrs
-Testing & documentation	1 hr
-
-📦 Deployment
-You can deploy this project easily using Vercel:
-
-Push your repository to GitHub
-
-Connect your repo on Vercel
-
-Add the same .env variables in Vercel dashboard
-
-Deploy 🚀
-
-📚 Learn More
-To learn more about the main tools used:
-
-Next.js Documentation
-
-tRPC Docs
-
-Drizzle ORM
-
-Zod Validation
-
-shadcn/ui
-
-Cloudinary Docs
-
-🧑‍💻 Author
-Made with ❤️ by Shourya Mittal
-
-yaml
-Copy code
-
----
-
-Would you like me to also generate a **short version** (for submission or repo overview) below thi
