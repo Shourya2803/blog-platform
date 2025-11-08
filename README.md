@@ -106,24 +106,6 @@ Priority 3 — Bonus Features
 
 These are approximate and depend on testing/iterations.
 
-## 6) Project structure / environment
 
-Top-level layout (key folders):
-
-- `src/app/` — Next.js App Router pages and layouts.
-	- `layout.tsx` — root layout; now a server component that includes `<head>` metadata.
-	- `page.tsx` — app root page.
-	- `blog/` — blog routes (listing `page.tsx`, create `page.tsx`, post `[id]/page.tsx`).
-	- `drafts/` — draft pages.
-
-- `src/components/` — shared presentational components
-	- `Navbar.tsx`, `BlogCard.tsx`, `RecentPostCard.tsx`, `ToastProvider.tsx`, `Providers.tsx` (client-only wrapper for providers).
-
-- `src/server/` — server-only code (e.g., database schema, server utils)
-	- `db/` — Drizzle schema and DB connection helpers.
-
-- `src/utils/` — client & server utilities (e.g., `trpc` client setup).
-
-- `public/` — static assets (icons, images).
 
 
