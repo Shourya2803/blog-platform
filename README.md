@@ -63,31 +63,24 @@ Dev / build tools
 ## 3) Features implemented (checklist)
 
 Priority 1 — Core app flows
-- [x] Blog post CRUD operations (create, read, update, delete)
-- [x] Category CRUD operations
-- [x] Assign one or more categories to posts
-- [x] Individual post view page
-- [x] Category filtering on listing page
-- [x] Basic responsive navigation
-- [x] Clean, professional UI (
+- [x] Blog listing (search + category filters): list posts and filter by title/categories.
+- [x] Create post form: title, image upload, category selection/creation, content editor (lightweight contentEditable), and live preview using a reusable `BlogCard` component.
+- [x] Post preview card (`BlogCard`): responsive, highlights selected categories, clickable category chips.
+- [x] Recent posts card (`RecentPostCard`): clickable links to post details.
+- [x] Global toasts: non-blocking success/error/info messages used across create/edit/delete flows.
+- [x] Drafts management: list and detail for drafts, with edit/delete flows.
 
-Priority 2 — Expected Features
-- [x] Landing page with at least 3 sections (Header/Hero, Feature,Footer0
-- [x] Dashboard page for managing posts
-- [x] Draft vs Published post status
-- [x] Loading and error states
-- [x] Mobile-responsive design
-- [x] Content editor (choose ONE: rich text editor OR markdown support - markdown is faster)
+Priority 2 — UX polish & responsiveness
+- [x] Responsive navbar (compact on mobile, larger on desktop): mobile menu DOM rendered only when open to avoid extra visual area.
+- [x] Mobile-first create page: editor min-heights adjusted, preview sticky only on md+, full-width image preview on phones.
+- [x] Replace blocking alert dialogs with toasts and a "Creating post..." info toast during mutations.
+- [x] Search highlights in titles for matching terms.
 
-Priority 3 — Bonus Features
-- [x] Full 5-section landing page (Header, Hero, Features, CTA, Footer)
-- [x] Search functionality for posts
-- [x] Post statistics (word count, reading time)
-- [x] Dark mode support
-- [x] Advanced rich text editor features
-- [x] Image upload for posts
-- [x] Post preview functionality
-
+Priority 3 — Developer & infra
+- [x] Next.js image host configured for Cloudinary remote patterns.
+- [x] TypeScript + Tailwind integration.
+- [x] Rich-text editor: a built-in rich-text editor is available in the Create flow (lightweight, formatting toolbar and basic image support).
+- [ ] Persistent loading toast: currently the info toast auto-dismisses; we can change to a dismissable persistent toast while mutations run.
 
 ## 4) Trade-offs and decisions
 
@@ -106,6 +99,24 @@ Priority 3 — Bonus Features
 
 These are approximate and depend on testing/iterations.
 
+## 6) Project structure / environment
 
+Top-level layout (key folders):
+
+- `src/app/` — Next.js App Router pages and layouts.
+	- `layout.tsx` — root layout; now a server component that includes `<head>` metadata.
+	- `page.tsx` — app root page.
+	- `blog/` — blog routes (listing `page.tsx`, create `page.tsx`, post `[id]/page.tsx`).
+	- `drafts/` — draft pages.
+
+- `src/components/` — shared presentational components
+	- `Navbar.tsx`, `BlogCard.tsx`, `RecentPostCard.tsx`, `ToastProvider.tsx`, `Providers.tsx` (client-only wrapper for providers).
+
+- `src/server/` — server-only code (e.g., database schema, server utils)
+	- `db/` — Drizzle schema and DB connection helpers.
+
+- `src/utils/` — client & server utilities (e.g., `trpc` client setup).
+
+- `public/` — static assets (icons, images).
 
 

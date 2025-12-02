@@ -60,12 +60,12 @@ export default function Navbar() {
 
   return (
     <nav className={`${navBgClass} shadow-sm`}>
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-3 sm:py-3 md:py-6 lg:py-10 flex items-center justify-between">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-2 sm:py-2 md:py-3 lg:py-4 flex items-center justify-between">
         {/* Left: Logo */}
         <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="text-xl sm:text-2xl md:text-4xl lg:text-6xl font-bold text-purple-600 hover:scale-105 transition-transform"
+            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-purple-600 hover:scale-105 transition-transform"
           >
             Blogify
           </Link>
@@ -73,7 +73,7 @@ export default function Navbar() {
 
         {/* Center: Navigation Links (render only on non-mobile to guard against missing Tailwind responsive CSS) */}
         {!isMobile && (
-          <div className="hidden md:flex items-center gap-6 md:gap-10 lg:gap-12 text-gray-700 dark:text-gray-300 text-sm  md:text-lg lg:text-xl">
+          <div className="hidden md:flex items-center gap-4 md:gap-6 lg:gap-8 text-gray-700 dark:text-gray-300 text-sm md:text-base lg:text-lg">
             <NavLink href="/">Home</NavLink>
             <NavLink href="/blog">Blogs</NavLink>
             <NavLink href="/blog/create">New Post</NavLink>
@@ -82,7 +82,7 @@ export default function Navbar() {
         )}
 
         {/* Right: Menu + Theme Toggle */}
-  <div className="flex items-center gap-2 md:gap-6 lg:gap-8">
+  <div className="flex items-center gap-2 md:gap-4 lg:gap-6">
           {/* Mobile menu button (render only on mobile) */}
           {isMobile && (
             <button
@@ -104,9 +104,9 @@ export default function Navbar() {
             className="relative z-10 hover:bg-purple-100 dark:hover:bg-gray-800 transition"
           >
             {theme === "light" ? (
-              <Moon className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 text-purple-600" />
+              <Moon className="h-5 w-5 md:h-6 md:w-6 lg:h-7 lg:w-7 text-purple-600" />
             ) : (
-              <Sun className="h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 text-yellow-400" />
+              <Sun className="h-5 w-5 md:h-6 md:w-6 lg:h-7 lg:w-7 text-yellow-400" />
             )}
           </Button>
         </div>
